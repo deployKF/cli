@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.19
+
+      - name: Build all targets
+        run: make build-all
+
+      - name: Compute checksums
+        run: |
+          cd bin
+          for file in deploykf-*; do
+            sha256sum "$file" > "$file.sha256"
+          done
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: ${{ contains(github.ref, "-') }}
+
+      - name: Upload binaries and checksums
+        run: |
+          for file in ./bin/deploykf-*; do
+            asset_name="$(basename $file)"
+            asset_path="./bin/$asset_name"
+            asset_checksum_path="./bin/$asset_name.sha256"
+
+            echo "Uploading $asset_name"
+            curl \
+              --progress-bar \
+              --location \
+              --request POST \
+              --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              --header 'Content-Type: application/octet-stream' \
+              --upload-file "$asset_path" \
+              --url "${{ steps.create_release.outputs.upload_url }}?name=$asset_name"
+
+            echo "Uploading $asset_name.sha256"
+            curl \
+              --progress-bar \
+              --location \
+              --request POST \
+              --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              --header 'Content-Type: text/plain' \
+              --upload-file "$asset_checksum_path" \
+              --url "${{ steps.create_release.outputs.upload_url }}?name=$asset_name.sha256"
+          done
