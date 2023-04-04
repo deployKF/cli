@@ -30,41 +30,39 @@ jobs:
             sha256sum "$file" > "$file.sha256"
           done
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub Release and Upload Release Assets
+        uses: actions/github-script@v6
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: true
-          prerelease: ${{ contains(github.ref, "-') }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            const { repo: { owner, repo }, ref: tag_ref } = context;
+            const tag_name = tag_ref.replace('refs/tags/', '');
+            
+            // Create a draft release
+            const response = await github.rest.repos.createRelease({
+              owner: owner,
+              repo: repo,
+              tag_name: tag_name,
+              name: `deployKF CLI ${tag_name}`,
+              draft: true,
+              prerelease: tag_name.includes('-'),
+            });
+            const { id: release_id } = response.data;
 
-      - name: Upload binaries and checksums
-        run: |
-          for file in ./bin/deploykf-*; do
-            asset_name="$(basename $file)"
-            asset_path="./bin/$asset_name"
-            asset_checksum_path="./bin/$asset_name.sha256"
-
-            echo "Uploading $asset_name"
-            curl \
-              --progress-bar \
-              --location \
-              --request POST \
-              --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              --header 'Content-Type: application/octet-stream' \
-              --upload-file "$asset_path" \
-              --url "${{ steps.create_release.outputs.upload_url }}?name=$asset_name"
-
-            echo "Uploading $asset_name.sha256"
-            curl \
-              --progress-bar \
-              --location \
-              --request POST \
-              --header "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              --header 'Content-Type: text/plain' \
-              --upload-file "$asset_checksum_path" \
-              --url "${{ steps.create_release.outputs.upload_url }}?name=$asset_name.sha256"
-          done
+            // Upload each binary and checksum file
+            const globber = await glob.create('./bin/deploykf-*');
+            for await (const file of globber.globGenerator()) {
+              const asset_name = path.basename(file);
+              const asset_path = `./bin/${asset_name}`;
+            
+              core.info(`Uploading ${asset_name}`);
+              await github.rest.repos.uploadReleaseAsset({
+                owner: owner,
+                repo: repo,
+                release_id: release_id,
+                name: asset_name,
+                data: fs.readFileSync(asset_path),
+              });
+            }

@@ -1,6 +1,14 @@
-# deployKF - cli
+# deployKF - Command Line Interface (CLI)
 
-The CLI for [deployKF](https://github.com/deployKF/deployKF).
+[![Check Commit](https://github.com/deployKF/cli/actions/workflows/check-commit.yml/badge.svg)](https://github.com/deployKF/cli/actions/workflows/check-commit.yml)
+
+This repo contains the command line interface (CLI) for [deployKF](https://github.com/deployKF/deployKF).
+
+## Install
+
+You can install the `deploykf` CLI by downloading the appropriate binary for your OS from the [releases page](https://github.com/deployKF/cli/releases).
+ - You may wish to rename the binary to `deploykf` (or `deploykf.exe` on Windows).
+ - On Unix-like systems, you may need to make the binary executable by running `chmod +x deploykf`.
 
 ## Usage
 
@@ -8,21 +16,34 @@ The simplest usage of the `deploykf` CLI is to run the following command:
 
 ```bash
 deploykf \
-  --source-version=v0.1.0 \
-  --values "./custom-values.yaml" \
-  --output-dir "./GENERATOR_OUTPUT"
+  --source-version v0.1.0 \
+  --values ./custom-values.yaml \
+  --output-dir ./GENERATOR_OUTPUT
 ```
 
-Which will generate deployKF manifests in the `./GENERATOR_OUTPUT` directory based on the `v0.1.0` source version and your `./values.yaml` file.
-
-The `--source-version` flag must be a tag associated with a [deployKF release](https://github.com/deployKF/deployKF/releases).
+This command will generate deployKF manifests in the `./GENERATOR_OUTPUT` directory using the `v0.1.0` source version and the values specified in your `./custom-values.yaml` file. 
+Note that the `--source-version` flag must correspond to a tag from a [deployKF release](https://github.com/deployKF/deployKF/releases).
 
 ## Development
 
-Running `make build` will build the binary for your local platform and output it to `./bin/deploykf`.
+Here are some helpful commands when developing the CLI:
 
-Running `make install` will install the binary to `/usr/local/bin`.
+- `make build`: Builds the binary for your local platform and outputs it to `./bin/deploykf`.
+- `make install`: Installs the binary to `/usr/local/bin`.
+- `make lint`: Runs `golangci-lint` against the codebase to check for errors.
+- `make lint-fix`: Attempts to automatically fix any linting errors found.
 
-Running `make lint` will run `golangci-lint` against the codebase.
+## Releasing
 
-Running `make lint-fix` will attempt to automatically fix linting errors.
+To release a new version of the CLI, follow these steps:
+
+1. For a new minor or major release, create a `release-*` branch first.
+    - For example, for the `v0.2.0` release, create a new branch called `release-0.2`. 
+    - This allows for the continued release of bug fixes to older CLI versions.
+2. Create a new tag on the appropriate release branch for the version you are releasing.
+    - For instance, you might create `v0.1.1` or `v0.1.1-alpha.1` on the `release-0.1` branch.
+    - Remember to create tags only on the `release-*` branches, not on the `main` branch.
+3. When a new semver tag is created, a workflow will automatically create a GitHub draft release.
+    - The release will include binaries and corresponding SHA256 checksums for all supported platforms.
+    - Don't forget to add the changelog to release notes.
+4. Manually publish the draft release.
