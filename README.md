@@ -41,6 +41,9 @@ To release a new version of the CLI, follow these steps:
     - For example, for the `v0.2.0` release, create a new branch called `release-0.2`. 
     - This allows for the continued release of bug fixes to older CLI versions.
 2. Create a new tag on the appropriate release branch for the version you are releasing.
+    - Ensure you sign the tag with your GPG key. 
+       - You can do this by running `git tag -s v0.1.1 -m "v0.1.1"`.
+       - You can verify the tag by running `git verify-tag v0.1.1`.
     - For instance, you might create `v0.1.1` or `v0.1.1-alpha.1` on the `release-0.1` branch.
     - Remember to create tags only on the `release-*` branches, not on the `main` branch.
 3. When a new semver tag is created, a workflow will automatically create a GitHub draft release.
