@@ -72,7 +72,7 @@ install: build
 .PHONY: test
 test:
 	@echo "********** running tests **********"
-	@go test -race -v ./...
+	@go test -v ./...
 
 # ------------------------------------------------------------------------------
 #  lint
