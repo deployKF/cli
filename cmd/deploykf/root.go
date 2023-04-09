@@ -7,17 +7,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const rootHelp = `
-XXXXXXXXXX
-XXXXXXXXXX
-XXXXXXXXXX
-XXXXXXXXXX
+const rootHelp = `deployKF is your open-source helper for deploying MLOps tools on Kubernetes.
+
+Common actions for deployKF:
+
+- deploykf generate:  Generate Kubernetes manifests from deployKF templates and config values
+
+The default directories depend on the Operating System. The defaults are listed below:
+
+| Operating System | Assets Cache Path              |
+|------------------|--------------------------------|
+| Linux            | $HOME/.deploykf/assets         |
+| macOS            | $HOME/.deploykf/assets         |
+| Windows          | %userprofile%\.deploykf\assets |
 `
 
 func newRootCmd(out io.Writer) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:          "deploykf",
-		Short:        "XXXXXXXXXX",
+		Short:        "deployKF is your open-source helper for deploying MLOps tools on Kubernetes",
 		Long:         rootHelp,
 		SilenceUsage: true,
 	}

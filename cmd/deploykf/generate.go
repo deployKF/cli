@@ -15,11 +15,47 @@ import (
 	"github.com/deployKF/cli/internal/version"
 )
 
-const generateHelp = `
-XXXXXXXXXX
-XXXXXXXXXX
-XXXXXXXXXX
-XXXXXXXXXX
+const generateHelp = `This command will generate an output folder containing Kubernetes manifests.
+
+ARGUMENTS:
+----------------
+
+You must provide either '--source-version' OR '--source-path' to specify the source of the generator:
+ - If '--source-version' is provided, the provided version tag will be downloaded from the 'deployKF/deployKF' GitHub.
+ - If '--source-path' is provided, the source will be read from the provided local directory or '.zip' file.
+
+You may provide one or more '--values' files that contain your configuration values:
+ - For more information on how to structure your values files, see the 'deployKF/deployKF' GitHub repository.
+
+You must provide '--output-dir' to specify the output directory for the generated manifests:
+ - If the directory does not exist, it will be created.
+ - If the directory is non-empty, it will be cleaned before generating the manifests.
+   However, it must contain a '.deploykf_output' marker file, otherwise the command will fail.
+
+OUTPUT:
+----------------
+
+The '.deploykf_output' marker file contains the following information:
+ - generated_at: the time the generator was run
+ - source_version: the source version that was used (if '--source-version' was provided)
+ - source_path: the path of the source artifact that was used 
+ - source_hash: the SHA256 hash of the source artifact that was used
+ - cli_version: the version of the deployKF CLI that was used
+
+EXAMPLES:
+----------------
+
+To generate manifests from a GitHub source version:
+
+    $ deploykf generate --source-version v0.1.0 --values ./values.yaml --output-dir ./GENERATOR_OUTPUT
+
+To generate manifests from a local source zip file:
+
+    $ deploykf generate --source-path ./deploykf.zip --values ./values.yaml --output-dir ./GENERATOR_OUTPUT
+
+To generate manifests from a local source directory:
+
+    $ deploykf generate --source-path ./deploykf --values ./values.yaml --output-dir ./GENERATOR_OUTPUT
 `
 
 type generateOptions struct {
@@ -34,7 +70,7 @@ func newGenerateCmd(out io.Writer) *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "generate",
-		Short: "XXXXXXXXXX",
+		Short: "Generate Kubernetes manifests from deployKF templates and config values",
 		Long:  generateHelp,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.run(out)
@@ -42,10 +78,10 @@ func newGenerateCmd(out io.Writer) *cobra.Command {
 	}
 
 	// add local flags
-	cmd.Flags().StringVarP(&o.sourceVersion, "source-version", "V", "", "XXXXXXX")
-	cmd.Flags().StringVar(&o.sourcePath, "source-path", "", "")
-	cmd.Flags().StringSliceVarP(&o.values, "values", "f", []string{}, "XXXXXXX")
-	cmd.Flags().StringVarP(&o.outputDir, "output-dir", "O", "", "XXXXXXX")
+	cmd.Flags().StringVarP(&o.sourceVersion, "source-version", "V", "", "a version tag from the 'deployKF/deployKF' GitHub repository")
+	cmd.Flags().StringVar(&o.sourcePath, "source-path", "", "a local path to a directory or '.zip' file containing a generator source")
+	cmd.Flags().StringSliceVarP(&o.values, "values", "f", []string{}, "a YAML file containing configuration values")
+	cmd.Flags().StringVarP(&o.outputDir, "output-dir", "O", "", "the output directory in which to generate the manifests")
 
 	// mark local flags
 	cmd.MarkFlagsMutuallyExclusive("source-version", "source-path")
@@ -56,13 +92,11 @@ func newGenerateCmd(out io.Writer) *cobra.Command {
 
 func (o *generateOptions) run(out io.Writer) error {
 	// TODO: verify the provided `--values`:
-	//  - ensure we test with multiple provided values files (also try with none)
-	//  - check the YAML schema against a spec that is defined in the generator
-	//  - check that all listed files exist
-	//  - consider more complex verification, like mutually-exclusive fields, etc.
+	//  - check the YAML schema against a spec that is defined in the generator source
+	//  - check that all provided file paths exist (before gomplate fails)
 
 	// initialise the source helper
-	// TODO: let users provide their own repo/owner
+	// TODO: let users provide their own repo/owner for the source
 	sourceHelper := generate.NewSourceHelper()
 
 	// create a temporary directory to store our generator source,

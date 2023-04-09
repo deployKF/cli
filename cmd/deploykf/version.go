@@ -41,7 +41,7 @@ func newVersionCmd(out io.Writer) *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "version",
-		Short: "Print version information",
+		Short: "Print CLI version information",
 		Long:  versionHelp,
 		Args:  require.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
