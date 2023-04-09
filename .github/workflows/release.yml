@@ -45,7 +45,7 @@ jobs:
               owner: owner,
               repo: repo,
               tag_name: tag_name,
-              name: `deployKF CLI ${tag_name}`,
+              name: `deployKF CLI - ${tag_name}`,
               draft: true,
               prerelease: tag_name.includes('-'),
             });
