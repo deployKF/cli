@@ -35,3 +35,4 @@ Here are some helpful commands when developing the CLI:
 - `make install`: Installs the binary to `/usr/local/bin`.
 - `make lint`: Runs `golangci-lint` against the codebase to check for errors.
 - `make lint-fix`: Attempts to automatically fix any linting errors found.
+
