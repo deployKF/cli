@@ -39,13 +39,14 @@ jobs:
             
             const { repo: { owner, repo }, ref: tag_ref } = context;
             const tag_name = tag_ref.replace('refs/tags/', '');
+            const tag_version = tag_ref.replace('refs/tags/v', '');
             
             // Create a draft release
             const response = await github.rest.repos.createRelease({
               owner: owner,
               repo: repo,
               tag_name: tag_name,
-              name: `deployKF CLI - ${tag_name}`,
+              name: `deployKF CLI - ${tag_version}`,
               draft: true,
               prerelease: tag_name.includes('-'),
             });
