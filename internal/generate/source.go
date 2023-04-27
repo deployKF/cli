@@ -49,18 +49,6 @@ func NewSourceHelper(opts ...SourceHelperOptions) *SourceHelper {
 	return gh
 }
 
-// ListReleases lists the available `github.RepositoryRelease` in the source repo.
-//func (h *SourceHelper) ListReleases() ([]*github.RepositoryRelease, error) {
-//	client := github.NewClient(nil)
-//
-//	releases, _, err := client.Repositories.ListReleases(context.Background(), h.GithubOwner, h.GithubRepo, nil)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	return releases, nil
-//}
-
 // DownloadAndUnpackSource downloads the generator source artifact for the specified version (if it's not already cached),
 // unpacks it to the provided folder, then returns the local path of the artifact .zip file.
 func (h *SourceHelper) DownloadAndUnpackSource(version string, unpackTargetDir string, out io.Writer) (string, error) {
@@ -167,10 +155,13 @@ func (h *SourceHelper) downloadReleaseAsset(releaseAsset *github.ReleaseAsset, d
 func (h *SourceHelper) getReleaseByVersion(version string) (*github.RepositoryRelease, error) {
 	client := github.NewClient(nil)
 
-	release, resp, err := client.Repositories.GetReleaseByTag(context.Background(), h.GithubOwner, h.GithubRepo, version)
+	// the repo uses a "v" prefix for release tags
+	tagName := "v" + version
+
+	release, resp, err := client.Repositories.GetReleaseByTag(context.Background(), h.GithubOwner, h.GithubRepo, tagName)
 	if err != nil {
 		if resp.StatusCode == http.StatusNotFound {
-			return nil, fmt.Errorf("github release not found for version: %s", version)
+			return nil, fmt.Errorf("github release not found with tag: %s", tagName)
 		}
 		return nil, err
 	}
