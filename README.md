@@ -14,7 +14,7 @@ The simplest usage of the `deploykf` CLI is to run the following command:
 
 ```bash
 deploykf \
-  --source-version v0.1.0 \
+  --source-version 0.1.0 \
   --values ./custom-values.yaml \
   --output-dir ./GENERATOR_OUTPUT
 ```
