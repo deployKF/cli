@@ -6,12 +6,7 @@ This repo contains the command line interface (CLI) for [deployKF](https://githu
 
 ## Install
 
-You can install the `deploykf` CLI by downloading the appropriate binary for your OS from the [releases page](https://github.com/deployKF/cli/releases).
- - You may wish to rename the binary to `deploykf` (or `deploykf.exe` on Windows).
- - You may need to make the binary executable on Linux/macOS by running `chmod +x deploykf`.
- - You may also wish to move the binary to a directory that is in your `PATH` environment variable. 
-    - On Linux/macOS you might run `sudo mv deploykf /usr/local/bin/`.
-    - On Windows you might run `move deploykf.exe C:\Windows\System32\`.
+To install the `deploykf` CLI, please follow the [installation instructions](https://www.deploykf.org/guides/install-deploykf-cli/) on the deployKF website.
 
 ## Usage
 
