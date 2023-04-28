@@ -171,8 +171,8 @@ func (o *generateOptions) run(out io.Writer) error {
 		ExcludeGlob:   []string{"*", "!*.gomplateignore_template"},
 		LDelim:        "{{<",
 		RDelim:        ">}}",
-		DataSources:   o.gomplateDataSources(defaultValuesPath),
-		Contexts:      o.gomplateContexts(),
+		DataSources:   o.gomplateDataSources(),
+		Contexts:      o.gomplateContexts(defaultValuesPath),
 		Templates:     o.gomplateTemplates(helpersPath),
 		SuppressEmpty: true,
 	}
@@ -211,8 +211,8 @@ func (o *generateOptions) run(out io.Writer) error {
 		OutputDir:     o.outputDir,
 		LDelim:        "{{<",
 		RDelim:        ">}}",
-		DataSources:   o.gomplateDataSources(defaultValuesPath),
-		Contexts:      o.gomplateContexts(),
+		DataSources:   o.gomplateDataSources(),
+		Contexts:      o.gomplateContexts(defaultValuesPath),
 		Templates:     o.gomplateTemplates(helpersPath),
 		SuppressEmpty: true,
 	}
@@ -228,43 +228,48 @@ func (o *generateOptions) run(out io.Writer) error {
 }
 
 // build the `DataSources` for our `gomplate.Config`
-func (o *generateOptions) gomplateDataSources(defaultValuesPath string) []string {
+func (o *generateOptions) gomplateDataSources() []string {
 
 	// create DataSource for each `--values` provided by the user
 	values := o.values
-	dataSources := make([]string, len(values)+1)
+	dataSources := make([]string, len(values))
 	for i, v := range values {
 		dataSources[i] = "Values_" + strconv.Itoa(i) + "=" + v
 	}
-
-	// create DataSource for the default values
-	dataSources[len(dataSources)-1] = "Values_default=" + defaultValuesPath
 
 	return dataSources
 }
 
 // build the `Contexts` for our `gomplate.Config`
-func (o *generateOptions) gomplateContexts() []string {
+func (o *generateOptions) gomplateContexts(defaultValuesPath string) []string {
 	var sb strings.Builder
-	sb.WriteString("Values=merge:")
 
-	// add the DataSources for any user provided `--values` to the merge
+	// merge the user-provided `--values` DataSources by placing a "|" between them
+	// NOTE: merges happen from right to left, so we add the `--values` in reverse
+	//       order so the `--values` that were provided later take precedence
 	values := o.values
-	for i := range values {
-		if i > 0 {
+	for i := len(values) - 1; i >= 0; i-- {
+		if sb.Len() > 0 {
 			sb.WriteString("|")
 		}
 		sb.WriteString("Values_")
 		sb.WriteString(strconv.Itoa(i))
 	}
 
-	// add the DataSource for the default values to the merge
-	if len(values) > 0 {
+	// add the `default_values.yaml` to the end of the merge
+	if sb.Len() > 0 {
 		sb.WriteString("|")
 	}
-	sb.WriteString("Values_default")
+	sb.WriteString(defaultValuesPath)
 
-	return []string{sb.String()}
+	// we only use `merge` if there is more than one DataSource
+	valuesContext := "Values="
+	if len(values) > 0 {
+		valuesContext += "merge:"
+	}
+	valuesContext += sb.String()
+
+	return []string{valuesContext}
 }
 
 // build the `Templates` for our `gomplate.Config`
