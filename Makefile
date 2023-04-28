@@ -80,7 +80,7 @@ test:
 .PHONY: lint
 lint: check-golangci-lint
 	@echo "********** running golangci-lint **********"
-	@golangci-lint run ./...
+	@golangci-lint run --verbose ./...
 
 # ------------------------------------------------------------------------------
 #  lint-fix
@@ -92,7 +92,7 @@ lint-fix: check-golangci-lint
 	@goimports -local github.com/deployKF/cli -w $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 	@echo "********** running golangci-lint --fix **********"
-	@golangci-lint run --fix ./...
+	@golangci-lint run --verbose --fix ./...
 
 # ------------------------------------------------------------------------------
 #  clean

@@ -161,6 +161,13 @@ func (o *generateOptions) run(out io.Writer) error {
 	templatesPath := filepath.Join(tempSourcePath, "templates")
 	helpersPath := filepath.Join(tempSourcePath, "helpers")
 	defaultValuesPath := filepath.Join(tempSourcePath, "default_values.yaml")
+	markerPath := filepath.Join(tempSourcePath, ".deploykf_generator")
+
+	// verify the generator source is valid, and is supported by this version of the CLI
+	err = generate.VerifyGeneratorSource(templatesPath, helpersPath, defaultValuesPath, markerPath)
+	if err != nil {
+		return err
+	}
 
 	// GENERATOR PHASE 1: render `.gomplateignore_template` files
 	//  - note, we are rendering the `.gomplateignore` files into the generator source
