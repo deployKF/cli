@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📓 Documentation Issue
+    url: https://github.com/deployKF/website/issues
+    about: Report an issue with the documentation
+  - name: 🔒 Security Issues
+    url: https://github.com/deployKF/cli/security/policy
+    about: Responsibly disclose security issues
