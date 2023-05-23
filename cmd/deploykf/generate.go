@@ -169,6 +169,14 @@ func (o *generateOptions) run(out io.Writer) error {
 		return err
 	}
 
+	// write runtime config templates
+	//  - note, we are writing these files into the source folder, not the output folder
+	runtimePath := filepath.Join(tempSourcePath, "runtime")
+	err = generate.WriteRuntimeTemplates(runtimePath, templatesPath, o.outputDir)
+	if err != nil {
+		return err
+	}
+
 	// GENERATOR PHASE 1: render `.gomplateignore_template` files
 	//  - note, we are rendering the `.gomplateignore` files into the generator source
 	//    templates folder, not the output folder
@@ -180,7 +188,7 @@ func (o *generateOptions) run(out io.Writer) error {
 		RDelim:        ">}}",
 		DataSources:   o.gomplateDataSources(),
 		Contexts:      o.gomplateContexts(defaultValuesPath),
-		Templates:     o.gomplateTemplates(helpersPath),
+		Templates:     o.gomplateTemplates(helpersPath, runtimePath),
 		SuppressEmpty: true,
 	}
 	err = gomplate.RunTemplates(phase1Config) //nolint:staticcheck
@@ -220,7 +228,7 @@ func (o *generateOptions) run(out io.Writer) error {
 		RDelim:        ">}}",
 		DataSources:   o.gomplateDataSources(),
 		Contexts:      o.gomplateContexts(defaultValuesPath),
-		Templates:     o.gomplateTemplates(helpersPath),
+		Templates:     o.gomplateTemplates(helpersPath, runtimePath),
 		SuppressEmpty: true,
 	}
 	err = gomplate.RunTemplates(phase2Config) //nolint:staticcheck
@@ -280,6 +288,9 @@ func (o *generateOptions) gomplateContexts(defaultValuesPath string) []string {
 }
 
 // build the `Templates` for our `gomplate.Config`
-func (o *generateOptions) gomplateTemplates(helpersPath string) []string {
-	return []string{"helpers=" + helpersPath}
+func (o *generateOptions) gomplateTemplates(helpersPath string, runtimePath string) []string {
+	return []string{
+		"helpers=" + helpersPath,
+		"runtime=" + runtimePath,
+	}
 }

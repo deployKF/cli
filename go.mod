@@ -1,23 +1,24 @@
 module github.com/deployKF/cli
 
-go 1.19
+go 1.20
 
-// temporarrily replace upstream gomplate with our fork
-//  - https://github.com/thesuperzapper/gomplate/tree/3-11-4-templates-fix-and-suppress-empty
+// note, we have forked gomplate to apply some changes:
+//  - https://github.com/deployKF/gomplate/tree/fork-3.11.5
 //
-// TODO: remove after gomplate applies these PRs:
-//  - fix using templates in `gomplate.RunTemplates()`
-//    https://github.com/hairyhenderson/gomplate/pull/1690
-//  - expose `SuppressEmpty` in `gomplate.Config`
-//    https://github.com/hairyhenderson/gomplate/pull/1691
+// to get the pseudoversion of the fork, run:
+//  - go get github.com/deploykf/gomplate/v3@{COMMIT_HASH}
 //
-replace github.com/hairyhenderson/gomplate/v3 => github.com/thesuperzapper/gomplate/v3 v3.0.0-20230329194704-40166f31ee76
+// the following changes are applied:
+//  - allow writing files outside working directory
+//  - allow setting SuppressEmpty in `gomplate.Config`
+//  - fix reading templates in `gomplate.RunTemplates()`
+//
+replace github.com/hairyhenderson/gomplate/v3 => github.com/deploykf/gomplate/v3 v3.0.0-20230523053447-c7847da61baa
 
 require (
 	github.com/google/go-github/v50 v50.2.0
-	github.com/hairyhenderson/gomplate/v3 v3.11.4
-	github.com/pkg/errors v0.9.1
-	github.com/spf13/cobra v1.6.1
+	github.com/hairyhenderson/gomplate/v3 v3.11.5
+	github.com/spf13/cobra v1.7.0
 )
 
 require (
@@ -97,7 +98,7 @@ require (
 	github.com/hashicorp/vault/sdk v0.5.0 // indirect
 	github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
-	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
@@ -111,6 +112,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oklog/run v1.1.0 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rs/zerolog v1.26.1 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect
@@ -126,10 +128,10 @@ require (
 	go4.org/unsafe/assume-no-moving-gc v0.0.0-20230204201903-c31fa085b70e // indirect
 	gocloud.dev v0.25.1-0.20220408200107-09b10f7359f7 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
-	golang.org/x/net v0.8.0 // indirect
-	golang.org/x/oauth2 v0.6.0 // indirect
-	golang.org/x/sys v0.6.0 // indirect
-	golang.org/x/text v0.8.0 // indirect
+	golang.org/x/net v0.9.0 // indirect
+	golang.org/x/oauth2 v0.7.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
 	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
 	google.golang.org/api v0.81.0 // indirect
