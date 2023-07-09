@@ -64,7 +64,7 @@ func (h *SourceHelper) DownloadAndUnpackSource(version string, unpackTargetDir s
 		return "", err
 	}
 	if !artifactIsCached {
-		fmt.Fprintf(out, "Downloading generator source for version: %s\n", version)
+		fmt.Fprintf(out, "Downloading deployKF generator source version '%s' from github repo '%s/%s'\n", version, h.GithubOwner, h.GithubRepo)
 
 		// get the GitHub release for the specified version
 		githubRelease, err := h.getReleaseByVersion(version)
@@ -81,7 +81,7 @@ func (h *SourceHelper) DownloadAndUnpackSource(version string, unpackTargetDir s
 			}
 		}
 		if githubAsset == nil {
-			return "", fmt.Errorf("generator artifact '%s' not found in release %s", artifactName, *githubRelease.TagName)
+			return "", fmt.Errorf("generator artifact '%s' not found in release '%s'", artifactName, *githubRelease.TagName)
 		}
 
 		// download the artifact
@@ -92,7 +92,7 @@ func (h *SourceHelper) DownloadAndUnpackSource(version string, unpackTargetDir s
 	}
 
 	// unzip the artifact
-	fmt.Fprintf(out, "Using cached source: %s\n", artifactPath)
+	fmt.Fprintf(out, "Using cached deployKF generator source: %s\n", artifactPath)
 	err = UnzipFile(artifactPath, unpackTargetDir, "generator")
 	if err != nil {
 		return "", err
@@ -161,7 +161,7 @@ func (h *SourceHelper) getReleaseByVersion(version string) (*github.RepositoryRe
 	release, resp, err := client.Repositories.GetReleaseByTag(context.Background(), h.GithubOwner, h.GithubRepo, tagName)
 	if err != nil {
 		if resp.StatusCode == http.StatusNotFound {
-			return nil, fmt.Errorf("github release not found with tag: %s", tagName)
+			return nil, fmt.Errorf("no github release found with tag '%s'", tagName)
 		}
 		return nil, err
 	}
