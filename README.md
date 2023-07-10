@@ -1,6 +1,14 @@
 # deployKF - Command Line Interface (CLI)
 
-[![Check Commit](https://github.com/deployKF/cli/actions/workflows/check-commit.yml/badge.svg)](https://github.com/deployKF/cli/actions/workflows/check-commit.yml)
+<a href="https://github.com/deployKF/cli/actions/workflows/check-commit.yml">
+  <img alt="Check Commit" src="https://github.com/deployKF/cli/actions/workflows/check-commit.yml/badge.svg">
+</a>
+<a href="https://github.com/deployKF/cli/releases">
+  <img alt="Downloads" src="https://img.shields.io/github/downloads/deployKF/cli/total?color=28a745">
+</a>
+<a href="https://github.com/deployKF/cli/releases">
+  <img alt="Latest Release" src="https://img.shields.io/github/v/release/deployKF/cli?color=6f42c1&label=latest%20release">
+</a>
 
 This repo contains the command line interface (CLI) for [deployKF](https://github.com/deployKF/deployKF).
 
