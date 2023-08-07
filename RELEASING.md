@@ -18,4 +18,5 @@ This guide is intended for maintainers who want to make a new release of the dep
        - The release will include the binaries and corresponding SHA256 checksums for all supported platforms.
 3. Generate the changelog using the "generate release notes" feature of GitHub and set it as the release description.
 4. When ready to ship, manually publish the draft release.
+    - This will trigger a workflow to build and push the Docker images for the release.
 5. Update the changelog on the website using the [`update_changelogs.sh`](https://github.com/deployKF/website/blob/main/update_changelogs.sh) script.
