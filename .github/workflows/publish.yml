@@ -10,7 +10,8 @@ permissions:
   packages: write
 
 env:
-  IMAGE_OWNER: ${{ github.repository_owner }}
+  ## we hard-coded instead of using ${{ github.repository_owner }} as docker buildx requires lowercase names for cache
+  IMAGE_OWNER: "deploykf"
   IMAGE_TITLE: "cli"
   IMAGE_DESCRIPTION: "the CLI for deployKF"
   IMAGE_FOLDER: ""
