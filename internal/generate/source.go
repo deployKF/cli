@@ -160,7 +160,7 @@ func (h *SourceHelper) getReleaseByVersion(version string) (*github.RepositoryRe
 
 	release, resp, err := client.Repositories.GetReleaseByTag(context.Background(), h.GithubOwner, h.GithubRepo, tagName)
 	if err != nil {
-		if resp.StatusCode == http.StatusNotFound {
+		if resp != nil && resp.StatusCode == http.StatusNotFound {
 			return nil, fmt.Errorf("no github release found with tag '%s'", tagName)
 		}
 		return nil, err
