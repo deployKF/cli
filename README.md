@@ -22,12 +22,12 @@ The simplest usage of the `deploykf` CLI is to run the following command:
 
 ```bash
 deploykf \
-  --source-version 0.1.0 \
+  --source-version 0.1.1 \
   --values ./custom-values.yaml \
   --output-dir ./GENERATOR_OUTPUT
 ```
 
-This command will generate deployKF manifests in the `./GENERATOR_OUTPUT` directory using the `v0.1.0` source version and the values specified in your `./custom-values.yaml` file. 
+This command will generate deployKF manifests in the `./GENERATOR_OUTPUT` directory using the `v0.1.1` source version and the values specified in your `./custom-values.yaml` file. 
 Note that the `--source-version` flag must correspond to a tag from a [deployKF release](https://github.com/deployKF/deployKF/releases).
 
 > __TIP:__ 
@@ -46,7 +46,7 @@ We publish the `deploykf` CLI as a container image on the following registries:
 To use the container image, you need to mount your local filesystem into the container:
 
 ```bash
-CONTAINER_IMAGE="ghcr.io/deploykf/cli:0.1.1"
+CONTAINER_IMAGE="ghcr.io/deploykf/cli:0.1.2"
 
 docker run \
   --rm \
@@ -54,7 +54,7 @@ docker run \
   --volume "${HOME}/.deploykf:/home/deploykf/.deploykf" \
   "${CONTAINER_IMAGE}" \
     generate \
-    --source-version "0.1.0" \
+    --source-version "0.1.1" \
     --values ./sample-values.yaml \
     --output-dir ./GENERATOR_OUTPUT
 ```
